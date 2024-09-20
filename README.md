@@ -9,14 +9,13 @@
 -Login/Signup
     -SignIn/SignUp Form
     -redirect to Browser Page
-
 -Browse(after Authentication)
-   -Header
-   -Main Movie
+    -Header
+    -Main Movie
      -Trailer in Background
-     -Title & Description
-     -Movie Suggestions
-       -MovieList*N
+       -Title & Description
+       -Movie Suggestions
+           -MovieList*N
 
 -NetflixGPT
     -Search Bar
