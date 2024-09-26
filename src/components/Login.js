@@ -1,16 +1,61 @@
 import React, { useRef, useState } from 'react'
 import Header from './Header.js'
 import { checkValidData } from '../utils/validate.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from '../utils/firebase.js';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
+import { USER_AVATAR } from '../utils/constants.js';
 
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
+    const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
+    const dispatch = useDispatch();
 
     const handleButtonClick = () => {
-        const message = checkValidData(email.current.value, password.current.value)
+        const emailValue = email.current.value;
+        const passwordValue = password.current.value;
+        const message = checkValidData(emailValue, passwordValue)
         setErrorMessage(message);
+        if (message) return;
+        if (!isSignInForm) {
+            //SignUp Logic
+            createUserWithEmailAndPassword(auth, emailValue, passwordValue)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    updateProfile(user, {
+                        displayName: name.current.value, photoURL: USER_AVATAR
+                    }).then(() => {
+                        const { uid, email, displayName, photoURL } = auth.currentUser;
+                        dispatch(addUser({ uid: uid, email: email, displayName: displayName, photoURL: photoURL }));
+                    }).catch((error) => {
+                        // An error occurred
+                        setErrorMessage(error.message);
+                    });
+                    console.log(user)
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrorMessage(errorCode + "-" + errorMessage);
+                });
+        } else {
+            signInWithEmailAndPassword(auth, emailValue, passwordValue)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log(user)
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrorMessage(errorCode + "-" + errorMessage)
+                });
+        }
     };
     const handleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
@@ -23,7 +68,7 @@ const Login = () => {
             </div>
             <form onSubmit={(e) => e.preventDefault()} className='w-4/12 absolute p-12 bg-black my-20 mx-auto py-5 left-0 right-0 text-white rounded-lg bg-opacity-80'>
                 <h1 className='font-bold text-3xl py-4'>{isSignInForm ? "Sign In" : "Sign Up"}</h1>
-                {!isSignInForm && <input type='text' placeholder='Full Name' className='p-4 my-4 w-full bg-gray-700' />}
+                {!isSignInForm && <input ref={name} type='text' placeholder='Full Name' className='p-4 my-4 w-full bg-gray-700' />}
                 <input ref={email} type='text' placeholder='Email Address' className='p-4 my-4 w-full bg-gray-700' />
                 <input ref={password} type='password' placeholder='Password' className='p-4 my-4 w-full bg-gray-700' />
                 <p className='text-red-500 font-bold text-lg py-2'>{errorMessage}</p>
