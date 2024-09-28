@@ -28,6 +28,8 @@
 -Fetch Data for Trailer Video
 -Embed the youtube video and autoplay in mute
 -Tailwind Classes to look video awesome
+-Build Secondary Component
+
 
 # Features
 
