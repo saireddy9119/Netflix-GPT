@@ -29,6 +29,15 @@
 -Embed the youtube video and autoplay in mute
 -Tailwind Classes to look video awesome
 -Build Secondary Component
+-Build Movie List
+-Build Movie Card
+-Get CDN Image from TMDB API
+-Make browse page amazing
+-Created Custom Hook
+-GPT Search Page
+-GPT Search Bar
+-Multi Language Feature in App
+-Integrate GPT API's
 
 
 # Features
